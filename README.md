@@ -82,6 +82,6 @@ Sad:
 
     $ c2m vi IV I V
 
-And, loads and loads more.
+And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
 Rich Jones, 2018. MIT.
