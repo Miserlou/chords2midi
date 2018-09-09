@@ -37,6 +37,7 @@ class Chords2Midi(object):
         parser.add_argument('-t', '--octave', type=int, default=4, help='Set the octave (default 4)')
         parser.add_argument('-k', '--key', type=str, default='C', help='Set the key (default C)')
         parser.add_argument('-d', '--duration', type=float, default=1.0, help='Set the chord duraction (default 1)')
+        parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
         parser.add_argument('-v', '--version', action='store_true', default=False,
             help='Display the current version of chords2midi')
 
@@ -75,10 +76,12 @@ class Chords2Midi(object):
                 midi.addNote(track, channel, pitch, bar, duration, volume)
             bar = bar + 1
 
-        filename = self.vargs['key'] + '-' + '-'.join(progression) + '.mid'
-
-        if os.path.exists(filename):
-            filename = self.vargs['key'] + '-' + '-'.join(progression) + '-' + str(int(time.time())) + '.mid'
+        if self.vargs['output']:
+            filename = self.vargs['output']
+        else:
+            filename = self.vargs['key'] + '-' + '-'.join(progression) + '.mid'
+            if os.path.exists(filename):
+                filename = self.vargs['key'] + '-' + '-'.join(progression) + '-' + str(int(time.time())) + '.mid'
 
         with open(filename, "wb") as output_file:
             midi.writeFile(output_file)
