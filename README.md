@@ -3,6 +3,8 @@
 
 Given it a chord progression, get a MIDI file!
 
+Take your MIDI file, drop it into your favorite DAW and [make a beat!](https://clyp.it/drltahki).
+
 ## Installation
 
     $ pip install chord2midi
