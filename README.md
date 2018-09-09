@@ -15,6 +15,11 @@ Take your MIDI file, drop it into your favorite DAW and [make a beat!](https://c
     $ ls
     C-I-V-vi-IV.mid
 
+More usage:
+
+    $ c2m I V vi iii IV I IV V --key D --bpm 120 --octave 5 --duration .25 # Pachabel's Canon in D, Staccato EDM Version
+
+
 Further options:
 
 ```
@@ -38,5 +43,45 @@ optional arguments:
                         Set the chord duraction (default 1)
   -v, --version         Display the current version of chords2midi
 ```
+
+## Common Progressions
+
+The classic:
+
+    $ c2m I V vi IV
+
+50's progressions:
+
+    $ c2m I vi IV V
+
+12 bar blues:
+
+   $ c2m I I I I IV IV I I V V I I
+   
+or:
+
+   $ c2m I I I I IV IV I I V VI I V  
+
+Smoke on the water:
+
+   $ c2m ii IV V
+
+Wild thing:
+
+   $ c2m I IV  V IV
+
+Flamenco:
+
+   $ c2m vi V VI V
+
+Gently weeps:
+
+   $  c2m ii I V6 VIIb VI
+
+Sad:
+
+   $ c2m vi IV I V
+
+And, loads and loads more.
 
 Rich Jones, 2018. MIT.
