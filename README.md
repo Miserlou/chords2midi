@@ -84,4 +84,9 @@ Sad:
 
 And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
+## Related
+
+ * [UltimateTemplate](https://github.com/Miserlou/UltimateTemplate) - Production-ready Ableton Live project templates.
+ * [ADGMaker](https://github.com/Miserlou/ADGMaker) - Make Ableton ADG instrumnents from Free Philharmonia Orchestra samples 
+
 Rich Jones, 2018. MIT.
