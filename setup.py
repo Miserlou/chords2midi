@@ -14,7 +14,7 @@ with open(os.path.join(os.path.dirname(__file__), 'requirements.txt')) as f:
 
 setup(
     name='chords2midi',
-    version='0.1.0',
+    version='0.2.0',
     packages=['chords2midi'],
     install_requires=required,
     include_package_data=True,
