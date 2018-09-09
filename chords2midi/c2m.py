@@ -32,7 +32,6 @@ class Chords2Midi(object):
         help_message = "Please supply chord progression!. See --help for more options."
         parser = argparse.ArgumentParser(description='chords2midi - Create MIDI files from written chord progressions.\n')
         parser.add_argument('progression', metavar='U', type=str, nargs='*', help=help_message)
-        parser.add_argument('-i', '--install', action='store_true', help='Install into Ableton directory', default=False)
         parser.add_argument('-b', '--bpm', type=int, default=160, help='Set the BPM (default 160)')
         parser.add_argument('-t', '--octave', type=int, default=4, help='Set the octave (default 4)')
         parser.add_argument('-k', '--key', type=str, default='C', help='Set the key (default C)')
@@ -79,9 +78,9 @@ class Chords2Midi(object):
         if self.vargs['output']:
             filename = self.vargs['output']
         else:
-            filename = self.vargs['key'] + '-' + '-'.join(progression) + '.mid'
+            filename = self.vargs['key'] + '-'  + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '.mid'
             if os.path.exists(filename):
-                filename = self.vargs['key'] + '-' + '-'.join(progression) + '-' + str(int(time.time())) + '.mid'
+                filename = self.vargs['key'] + '-' + '-'.join(progression) + '-' + str(self.vargs['bpm']) +  + '-' + str(int(time.time())) + '.mid'
 
         with open(filename, "wb") as output_file:
             midi.writeFile(output_file)

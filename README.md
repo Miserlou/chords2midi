@@ -17,7 +17,9 @@ Take your MIDI file, drop it into your favorite DAW and [make a beat!](https://c
 
 More usage:
 
-    $ c2m I V vi iii IV I IV V --key D --bpm 120 --octave 5 --duration .25 # Pachabel's Canon in D, Staccato EDM Version
+    $ c2m I V vi iii IV I IV V --key D --bpm 128 --octave 5 --duration .25 # Pachabel's Canon in D, Staccato EDM Version
+    $ ls
+    D-I-V-vi-iii-IV-I-IV-V-128.mid
 
 
 Further options:
@@ -34,7 +36,6 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -i, --install         Install into Ableton directory
   -b BPM, --bpm BPM     Set the BPM (default 160)
   -t OCTAVE, --octave OCTAVE
                         Set the octave (default 4)
@@ -57,10 +58,10 @@ The classic:
 12 bar blues:
 
     $ c2m I I I I IV IV I I V V I I
-   
+
 or:
 
-    $ c2m I I I I IV IV I I V VI I V  
+    $ c2m I I I I IV IV I I V VI I V
 
 Smoke on the water:
 
@@ -87,6 +88,6 @@ And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 ## Related
 
  * [UltimateTemplate](https://github.com/Miserlou/UltimateTemplate) - Production-ready Ableton Live project templates.
- * [ADGMaker](https://github.com/Miserlou/ADGMaker) - Make Ableton ADG instrumnents from Free Philharmonia Orchestra samples 
+ * [ADGMaker](https://github.com/Miserlou/ADGMaker) - Make Ableton ADG instrumnents from Free Philharmonia Orchestra samples
 
 Rich Jones, 2018. MIT.
