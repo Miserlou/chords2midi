@@ -3,7 +3,7 @@
 
 Given it a chord progression, get a MIDI file!
 
-Take your MIDI file, drop it into your favorite DAW and [make a beat!](https://clyp.it/drltahki).
+Take your MIDI file, drop it into your favorite DAW and [make a beat!](https://clyp.it/drltahki)
 
 ## Installation
 
@@ -48,39 +48,39 @@ optional arguments:
 
 The classic:
 
-    $ c2m I V vi IV
+     $ c2m I V vi IV
 
-50's progressions:
+50's progression:
 
-    $ c2m I vi IV V
+     $ c2m I vi IV V
 
 12 bar blues:
 
-   $ c2m I I I I IV IV I I V V I I
+    $ c2m I I I I IV IV I I V V I I
    
 or:
 
-   $ c2m I I I I IV IV I I V VI I V  
+    $ c2m I I I I IV IV I I V VI I V  
 
 Smoke on the water:
 
-   $ c2m ii IV V
+    $ c2m ii IV V
 
 Wild thing:
 
-   $ c2m I IV  V IV
+    $ c2m I IV  V IV
 
 Flamenco:
 
-   $ c2m vi V VI V
+    $ c2m vi V VI V
 
 Gently weeps:
 
-   $  c2m ii I V6 VIIb VI
+    $  c2m ii I V6 VIIb VI
 
 Sad:
 
-   $ c2m vi IV I V
+    $ c2m vi IV I V
 
 And, loads and loads more.
 
