@@ -1,3 +1,4 @@
+![chords2midi](https://i.imgur.com/rvXoXOf.png)
 # chord2midi
 
 Given it a chord progression, get a MIDI file!
@@ -8,7 +9,7 @@ Given it a chord progression, get a MIDI file!
 
 ## Usage
 
-    $ p chords2midi/c2m.py I V vi IV --key C
+    $ c2m I V vi IV --key C
     $ ls
     C-I-V-vi-IV.mid
 
