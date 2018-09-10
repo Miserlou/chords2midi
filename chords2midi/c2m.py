@@ -36,6 +36,7 @@ class Chords2Midi(object):
         parser.add_argument('-t', '--octave', type=int, default=4, help='Set the octave (default 4)')
         parser.add_argument('-i', '--input', type=str, default=None, help='Read from an input file.')
         parser.add_argument('-k', '--key', type=str, default='C', help='Set the key (default C)')
+        parser.add_argument('-n', '--notes', type=int, default=99, help='Notes in each chord (default all)')
         parser.add_argument('-d', '--duration', type=float, default=1.0, help='Set the chord duraction (default 1)')
         parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
         parser.add_argument('-v', '--version', action='store_true', default=False,
@@ -77,9 +78,11 @@ class Chords2Midi(object):
         bar = 0
         progression_cords = to_chords(progression, self.vargs['key'])
         for chord in progression_cords:
-            for note in chord:
+            for i, note in enumerate(chord):
                 pitch = pychord.utils.note_to_val(note) + (self.vargs['octave'] * 12)
                 midi.addNote(track, channel, pitch, bar, duration, volume)
+                if i + 1 >= self.vargs['notes']:
+                    break
             bar = bar + 1
 
         if self.vargs['output']:
