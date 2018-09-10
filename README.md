@@ -25,7 +25,8 @@ More usage:
 Further options:
 
 ```
-usage: c2m.py [-h] [-i] [-b BPM] [-t OCTAVE] [-k KEY] [-d DURATION] [-v]
+usage: c2m.py [-h] [-b BPM] [-t OCTAVE] [-i INPUT] [-k KEY] [-n NOTES]
+              [-d DURATION] [-o OUTPUT] [-v]
               [U [U ...]]
 
 chords2midi - Create MIDI files from written chord progressions.
@@ -39,9 +40,16 @@ optional arguments:
   -b BPM, --bpm BPM     Set the BPM (default 160)
   -t OCTAVE, --octave OCTAVE
                         Set the octave (default 4)
+  -i INPUT, --input INPUT
+                        Read from an input file.
   -k KEY, --key KEY     Set the key (default C)
+  -n NOTES, --notes NOTES
+                        Notes in each chord (default all)
   -d DURATION, --duration DURATION
                         Set the chord duraction (default 1)
+  -o OUTPUT, --output OUTPUT
+                        Set the output file path. Default is the current key
+                        and progression in the current location.
   -v, --version         Display the current version of chords2midi
 ```
 
