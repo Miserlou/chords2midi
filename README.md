@@ -93,6 +93,13 @@ Sad:
 
 And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
+## Playback
+
+If you're on OSX:
+
+    $ brew install timidity
+    $ timidity your-midi.mid
+
 ## Related
 
  * [UltimateTemplate](https://github.com/Miserlou/UltimateTemplate) - Production-ready Ableton Live project templates.
