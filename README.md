@@ -21,6 +21,9 @@ More usage:
     $ ls
     D-I-V-vi-iii-IV-I-IV-V-128.mid
 
+You can place rests with `X`:
+
+    $ c2m I X V X vi X IV
 
 Further options:
 
@@ -53,7 +56,7 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         Set the output file path. Default is the current key
                         and progression in the current location.
-  -v, --version         Display the current version of chords2midi```
+  -v, --version         Display the current version of chords2midi
 ```
 
 ## Common Progressions
