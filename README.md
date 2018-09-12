@@ -1,5 +1,5 @@
 ![chords2midi](https://i.imgur.com/rvXoXOf.png)
-# chord2midi
+# chords2midi
 
 Given it a chord progression, get a MIDI file!
 
