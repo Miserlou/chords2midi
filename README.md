@@ -26,7 +26,7 @@ Further options:
 
 ```
 usage: c2m.py [-h] [-b BPM] [-t OCTAVE] [-i INPUT] [-k KEY] [-n NOTES]
-              [-d DURATION] [-o OUTPUT] [-v]
+              [-d DURATION] [-H HUMANIZE] [-o OUTPUT] [-v]
               [U [U ...]]
 
 chords2midi - Create MIDI files from written chord progressions.
@@ -47,10 +47,13 @@ optional arguments:
                         Notes in each chord (default all)
   -d DURATION, --duration DURATION
                         Set the chord duraction (default 1)
+  -H HUMANIZE, --humanize HUMANIZE
+                        Set the amount to "humanize" (strum) a chord, in ticks
+                        - try .11 (default 0.0)
   -o OUTPUT, --output OUTPUT
                         Set the output file path. Default is the current key
                         and progression in the current location.
-  -v, --version         Display the current version of chords2midi
+  -v, --version         Display the current version of chords2midi```
 ```
 
 ## Common Progressions
