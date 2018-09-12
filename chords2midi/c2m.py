@@ -38,6 +38,7 @@ class Chords2Midi(object):
         parser.add_argument('-k', '--key', type=str, default='C', help='Set the key (default C)')
         parser.add_argument('-n', '--notes', type=int, default=99, help='Notes in each chord (default all)')
         parser.add_argument('-d', '--duration', type=float, default=1.0, help='Set the chord duraction (default 1)')
+        parser.add_argument('-H', '--humanize', type=float, default=0.0, help='Set the amount to "humanize" (strum) a chord, in ticks - try .11 (default 0.0)')
         parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
         parser.add_argument('-v', '--version', action='store_true', default=False,
             help='Display the current version of chords2midi')
@@ -75,15 +76,35 @@ class Chords2Midi(object):
         midi = MIDIFile(1)
         midi.addTempo(track, ttime, tempo)
 
+        ##
+        # Main generator
+        ##
+
         bar = 0
         progression_cords = to_chords(progression, self.vargs['key'])
         for chord in progression_cords:
+
+            humanize_amount = self.vargs['humanize']
             for i, note in enumerate(chord):
                 pitch = pychord.utils.note_to_val(note) + (self.vargs['octave'] * 12)
-                midi.addNote(track, channel, pitch, bar, duration, volume)
+                midi.addNote(
+                    track=track,
+                    channel=channel,
+                    pitch=pitch,
+                    time=bar + humanize_amount,
+                    duration=duration,
+                    volume=volume
+                )
+
+                humanize_amount = humanize_amount + self.vargs['humanize']
                 if i + 1 >= self.vargs['notes']:
                     break
+
             bar = bar + 1
+
+        ##
+        # Output
+        ##
 
         if self.vargs['output']:
             filename = self.vargs['output']
