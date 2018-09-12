@@ -72,6 +72,7 @@ class Chords2Midi(object):
         duration = self.vargs['duration'] # In beats
         tempo    = self.vargs['bpm']   # In BPM
         volume   = 100  # 0-127, as per the MIDI standard
+        bar = 0
 
         midi = MIDIFile(1)
         midi.addTempo(track, ttime, tempo)
@@ -80,26 +81,31 @@ class Chords2Midi(object):
         # Main generator
         ##
 
-        bar = 0
-        progression_cords = to_chords(progression, self.vargs['key'])
-        for chord in progression_cords:
+        # We do this to allow blank spaces
+        progression_chords = []
+        for chord in progression:
+            progression_chord = to_chords(chord, self.vargs['key'])
+            if progression_chord == []:
+                progression_chord = [None]
+            progression_chords.append(progression_chord[0])
 
-            humanize_amount = self.vargs['humanize']
-            for i, note in enumerate(chord):
-                pitch = pychord.utils.note_to_val(note) + (self.vargs['octave'] * 12)
-                midi.addNote(
-                    track=track,
-                    channel=channel,
-                    pitch=pitch,
-                    time=bar + humanize_amount,
-                    duration=duration,
-                    volume=volume
-                )
+        for chord in progression_chords:
+            if chord is not None:
+                humanize_amount = self.vargs['humanize']
+                for i, note in enumerate(chord):
+                    pitch = pychord.utils.note_to_val(note) + (self.vargs['octave'] * 12)
+                    midi.addNote(
+                        track=track,
+                        channel=channel,
+                        pitch=pitch,
+                        time=bar + humanize_amount,
+                        duration=duration,
+                        volume=volume
+                    )
 
-                humanize_amount = humanize_amount + self.vargs['humanize']
-                if i + 1 >= self.vargs['notes']:
-                    break
-
+                    humanize_amount = humanize_amount + self.vargs['humanize']
+                    if i + 1 >= self.vargs['notes']:
+                        break
             bar = bar + 1
 
         ##
