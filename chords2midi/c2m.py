@@ -40,6 +40,7 @@ class Chords2Midi(object):
         parser.add_argument('-d', '--duration', type=float, default=1.0, help='Set the chord duraction (default 1)')
         parser.add_argument('-H', '--humanize', type=float, default=0.0, help='Set the amount to "humanize" (strum) a chord, in ticks - try .11 (default 0.0)')
         parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
+        parser.add_argument('-O', '--offset', type=float, help='Set the amount to offset each chord, in ticks. (default 0.0)')
         parser.add_argument('-v', '--version', action='store_true', default=False,
             help='Display the current version of chords2midi')
 
@@ -73,6 +74,7 @@ class Chords2Midi(object):
         tempo    = self.vargs['bpm']   # In BPM
         volume   = 100  # 0-127, as per the MIDI standard
         bar = 0
+        offset = self.vargs['offset']
 
         midi = MIDIFile(1)
         midi.addTempo(track, ttime, tempo)
@@ -98,7 +100,7 @@ class Chords2Midi(object):
                         track=track,
                         channel=channel,
                         pitch=pitch,
-                        time=bar + humanize_amount,
+                        time=offset + bar + humanize_amount,
                         duration=duration,
                         volume=volume
                     )
