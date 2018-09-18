@@ -109,6 +109,6 @@ If you're on OSX:
 ## Related
 
  * [UltimateTemplate](https://github.com/Miserlou/UltimateTemplate) - Production-ready Ableton Live project templates.
- * [ADGMaker](https://github.com/Miserlou/ADGMaker) - Make Ableton ADG instrumnents from Free Philharmonia Orchestra samples
+ * [ADGMaker](https://github.com/Miserlou/ADGMaker) - Make Ableton ADG instruments from Free Philharmonia Orchestra samples
 
 Rich Jones, 2018. MIT.
