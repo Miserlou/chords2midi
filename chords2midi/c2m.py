@@ -40,7 +40,7 @@ class Chords2Midi(object):
         parser.add_argument('-d', '--duration', type=float, default=1.0, help='Set the chord duraction (default 1)')
         parser.add_argument('-H', '--humanize', type=float, default=0.0, help='Set the amount to "humanize" (strum) a chord, in ticks - try .11 (default 0.0)')
         parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
-        parser.add_argument('-O', '--offset', type=float, help='Set the amount to offset each chord, in ticks. (default 0.0)')
+        parser.add_argument('-O', '--offset', type=float, default=0.0, help='Set the amount to offset each chord, in ticks. (default 0.0)')
         parser.add_argument('-v', '--version', action='store_true', default=False,
             help='Display the current version of chords2midi')
 
@@ -121,7 +121,7 @@ class Chords2Midi(object):
         else:
             filename = self.vargs['key'] + '-'  + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '.mid'
             if os.path.exists(filename):
-                filename = self.vargs['key'] + '-' + '-'.join(progression) + '-' + str(self.vargs['bpm']) +  + '-' + str(int(time.time())) + '.mid'
+                filename = self.vargs['key'] + '-' + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '-' + str(int(time.time())) + '.mid'
 
         with open(filename, "wb") as output_file:
             midi.writeFile(output_file)
