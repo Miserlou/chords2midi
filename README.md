@@ -7,7 +7,7 @@ Take your MIDI file, drop it into your favorite DAW and [make a beat!](https://c
 
 ## Installation
 
-    $ pip install chord2midi
+    $ pip install chords2midi
 
 ## Usage
 
