@@ -21,6 +21,12 @@ More usage:
     $ ls
     D-I-V-vi-iii-IV-I-IV-V-128.mid
 
+You can also use named chords directly:
+
+    $ c2m Am Em F G --bpm 80
+    $ ls
+    Am-Em-F-G-80.mid
+
 You can place rests with `X`:
 
     $ c2m I X V X vi X IV

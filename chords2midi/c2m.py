@@ -82,13 +82,24 @@ class Chords2Midi(object):
         ##
         # Main generator
         ##
+        has_number = False
 
         # We do this to allow blank spaces
         progression_chords = []
         for chord in progression:
+
+            # This is for # 'I', 'VI', etc
             progression_chord = to_chords(chord, self.vargs['key'])
+            if progression_chord != []:
+                has_number = True
+
+            # This is for 'C', 'Am', etc.
             if progression_chord == []:
-                progression_chord = [None]
+                try:
+                    progression_chord = [pychord.Chord(chord).components()]
+                except Exception:
+                    progression_chord = [None]
+
             progression_chords.append(progression_chord[0])
 
         for chord in progression_chords:
@@ -119,9 +130,14 @@ class Chords2Midi(object):
         elif self.vargs['input']:
             filename = self.vargs['input'].replace('.txt', '.mid')
         else:
-            filename = self.vargs['key'] + '-'  + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '.mid'
+            if has_number:
+                key_prefix = self.vargs['key'] + '-'
+            else:
+                key_prefix = ''
+
+            filename = key_prefix + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '.mid'
             if os.path.exists(filename):
-                filename = self.vargs['key'] + '-' + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '-' + str(int(time.time())) + '.mid'
+                filename = key_prefix + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '-' + str(int(time.time())) + '.mid'
 
         with open(filename, "wb") as output_file:
             midi.writeFile(output_file)
