@@ -33,7 +33,7 @@ class Chords2Midi(object):
         parser = argparse.ArgumentParser(description='chords2midi - Create MIDI files from written chord progressions.\n')
         parser.add_argument('progression', metavar='U', type=str, nargs='*', help=help_message)
         parser.add_argument('-b', '--bpm', type=int, default=160, help='Set the BPM (default 160)')
-        parser.add_argument('-t', '--octave', type=int, default=4, help='Set the octave (default 4)')
+        parser.add_argument('-t', '--octave', type=str, default='4', help='Set the octave(s) (ex: 3,4) (default 4)')
         parser.add_argument('-i', '--input', type=str, default=None, help='Read from an input file.')
         parser.add_argument('-k', '--key', type=str, default='C', help='Set the key (default C)')
         parser.add_argument('-n', '--notes', type=int, default=99, help='Notes in each chord (default all)')
@@ -75,6 +75,7 @@ class Chords2Midi(object):
         volume   = 100  # 0-127, as per the MIDI standard
         bar = 0
         offset = self.vargs['offset']
+        octaves = self.vargs['octave'].split(',')
 
         midi = MIDIFile(1)
         midi.addTempo(track, ttime, tempo)
@@ -105,20 +106,21 @@ class Chords2Midi(object):
         for chord in progression_chords:
             if chord is not None:
                 humanize_amount = self.vargs['humanize']
-                for i, note in enumerate(chord):
-                    pitch = pychord.utils.note_to_val(note) + (self.vargs['octave'] * 12)
-                    midi.addNote(
-                        track=track,
-                        channel=channel,
-                        pitch=pitch,
-                        time=offset + bar + humanize_amount,
-                        duration=duration,
-                        volume=volume
-                    )
+                for octave in octaves:
+                    for i, note in enumerate(chord):
+                        pitch = pychord.utils.note_to_val(note) + (int(octave.strip()) * 12)
+                        midi.addNote(
+                            track=track,
+                            channel=channel,
+                            pitch=pitch,
+                            time=offset + bar + humanize_amount,
+                            duration=duration,
+                            volume=volume
+                        )
 
-                    humanize_amount = humanize_amount + self.vargs['humanize']
-                    if i + 1 >= self.vargs['notes']:
-                        break
+                        humanize_amount = humanize_amount + self.vargs['humanize']
+                        if i + 1 >= self.vargs['notes']:
+                            break
             bar = bar + 1
 
         ##
