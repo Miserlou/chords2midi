@@ -4,6 +4,7 @@ import argparse
 import os
 import pychord
 import time
+import traceback
 
 from midiutil import MIDIFile
 from mingus.core.progressions import to_chords
@@ -74,7 +75,10 @@ class Chords2Midi(object):
         tempo    = self.vargs['bpm']   # In BPM
         volume   = 100  # 0-127, as per the MIDI standard
         bar = 0
+        humanize_interval = self.vargs['humanize']
+        num_notes = self.vargs['notes']
         offset = self.vargs['offset']
+        key = self.vargs['key']
         octaves = self.vargs['octave'].split(',')
 
         midi = MIDIFile(1)
@@ -90,7 +94,7 @@ class Chords2Midi(object):
         for chord in progression:
 
             # This is for # 'I', 'VI', etc
-            progression_chord = to_chords(chord, self.vargs['key'])
+            progression_chord = to_chords(chord, key)
             if progression_chord != []:
                 has_number = True
 
@@ -105,7 +109,7 @@ class Chords2Midi(object):
 
         for chord in progression_chords:
             if chord is not None:
-                humanize_amount = self.vargs['humanize']
+                humanize_amount = humanize_interval
                 for octave in octaves:
                     for i, note in enumerate(chord):
                         pitch = pychord.utils.note_to_val(note) + (int(octave.strip()) * 12)
@@ -118,9 +122,9 @@ class Chords2Midi(object):
                             volume=volume
                         )
 
-                        humanize_amount = humanize_amount + self.vargs['humanize']
-                        if i + 1 >= self.vargs['notes']:
-                            break
+                    humanize_amount = humanize_amount + humanize_interval
+                    if i + 1 >= num_notes:
+                        break
             bar = bar + 1
 
         ##
@@ -133,13 +137,13 @@ class Chords2Midi(object):
             filename = self.vargs['input'].replace('.txt', '.mid')
         else:
             if has_number:
-                key_prefix = self.vargs['key'] + '-'
+                key_prefix = key + '-'
             else:
                 key_prefix = ''
 
-            filename = key_prefix + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '.mid'
+            filename = key_prefix + '-'.join(progression) + '-' + str(tempo) + '.mid'
             if os.path.exists(filename):
-                filename = key_prefix + '-'.join(progression) + '-' + str(self.vargs['bpm']) + '-' + str(int(time.time())) + '.mid'
+                filename = key_prefix + '-'.join(progression) + '-' + str(tempo) + '-' + str(int(time.time())) + '.mid'
 
         with open(filename, "wb") as output_file:
             midi.writeFile(output_file)
@@ -156,6 +160,7 @@ def handle(): # pragma: no cover
         return
     except Exception as e:
         print(e)
+        traceback.print_exc()
 
 if __name__ == '__main__': # pragma: no cover
     handle()
