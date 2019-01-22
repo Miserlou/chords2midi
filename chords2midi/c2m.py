@@ -160,8 +160,8 @@ class Chords2Midi(object):
 
                 # Move the shortest distance
                 if pitches != []:
-                    new_remaining_pitches = all_new_pitches
-                    old_remaining_pitches = previous_pitches
+                    new_remaining_pitches = list(all_new_pitches)
+                    old_remaining_pitches = list(previous_pitches)
                     for i, new_pitch in enumerate(all_new_pitches):
                         # We're already there
                         if new_pitch in pitches:
@@ -176,6 +176,7 @@ class Chords2Midi(object):
                         new_index = None
                         pitch_to_add = None
                         for i, pitch in enumerate(new_remaining_pitches):
+                            # XXX: DRY 
 
                             # The Pitch
                             pitch_to_test = pitch
@@ -186,7 +187,6 @@ class Chords2Midi(object):
                                 previous_index = old_nearest_index
                                 new_index = i
                                 pitch_to_add = pitch_to_test
-                                print('0')
 
                             # +12
                             pitch_to_test = pitch + 12
@@ -197,7 +197,6 @@ class Chords2Midi(object):
                                 previous_index = old_nearest_index
                                 new_index = i
                                 pitch_to_add = pitch_to_test
-                                print('+12')
 
                             # -12
                             pitch_to_test = pitch - 12
@@ -208,14 +207,66 @@ class Chords2Midi(object):
                                 previous_index = old_nearest_index
                                 new_index = i
                                 pitch_to_add = pitch_to_test
-                                print('-12')
 
+                        # Before we add it - just make sure that there isn't a better place for it.
                         pitches.append(pitch_to_add)
                         del old_remaining_pitches[previous_index]
                         del new_remaining_pitches[new_index]
+                                
+                        if len(old_remaining_pitches) == 0:
+                            for x, extra_pitch in enumerate(new_remaining_pitches):
+                                pitches.append(extra_pitch)
+                                del new_remaining_pitches[x]
+
+                    # Final check - can the highest and lowest be safely folded inside?
+                    max_pitch = max(pitches)
+                    min_pitch = min(pitches)
+                    index_max = pitches.index(max_pitch)
+                    folded_max = max_pitch - 12
+                    if (folded_max > min_pitch) and (folded_max not in pitches):
+                        pitches[index_max] = folded_max
+
+                    max_pitch = max(pitches)
+                    min_pitch = min(pitches)
+                    index_min = pitches.index(min_pitch)
+                    
+                    folded_min = min_pitch + 12
+                    if (folded_min < max_pitch) and (folded_min not in pitches):
+                        pitches[index_min] = folded_min
+
+                    # Make sure the average can't be improved
+                    # XXX: DRY 
+                    if len(previous_pitches) != 0:
+                        previous_average = sum(previous_pitches) / len(previous_pitches)
+
+                        # Max
+                        max_pitch = max(pitches)
+                        min_pitch = min(pitches)
+                        index_max = pitches.index(max_pitch)
+                        folded_max = max_pitch - 12
+
+                        current_average = sum(pitches) / len(pitches)
+                        hypothetical_pitches = list(pitches)
+                        hypothetical_pitches[index_max] = folded_max
+                        hypothetical_average = sum(hypothetical_pitches) / len(hypothetical_pitches)
+                        if abs(previous_average-hypothetical_average) <= abs(previous_average-current_average):
+                            pitches[index_max] = folded_max
+                        # Min
+                        max_pitch = max(pitches)
+                        min_pitch = min(pitches)
+                        index_min = pitches.index(min_pitch)
+                        folded_min = min_pitch + 12
+
+                        current_average = sum(pitches) / len(pitches)
+                        hypothetical_pitches = list(pitches)
+                        hypothetical_pitches[index_min] = folded_min
+                        hypothetical_average = sum(hypothetical_pitches) / len(hypothetical_pitches)
+                        if abs(previous_average-hypothetical_average) <= abs(previous_average-current_average):
+                            pitches[index_min] = folded_min
 
                 # Apply contrary motion
                 else:
+                    print ("Applying contrary motion!")
                     for i, new_pitch in enumerate(all_new_pitches):
                         if i == 0:
                             pitches.append(new_pitch)
@@ -252,7 +303,6 @@ class Chords2Midi(object):
                 if i + 1 >= num_notes:
                     break
             bar = bar + 1
-
             previous_pitches = pitches
 
         ##
