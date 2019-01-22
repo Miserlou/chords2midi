@@ -33,7 +33,7 @@ class Chords2Midi(object):
         help_message = "Please supply chord progression!. See --help for more options."
         parser = argparse.ArgumentParser(description='chords2midi - Create MIDI files from written chord progressions.\n')
         parser.add_argument('progression', metavar='U', type=str, nargs='*', help=help_message)
-        parser.add_argument('-b', '--bpm', type=int, default=160, help='Set the BPM (default 160)')
+        parser.add_argument('-b', '--bpm', type=int, default=80, help='Set the BPM (default 80)')
         parser.add_argument('-t', '--octave', type=str, default='4', help='Set the octave(s) (ex: 3,4) (default 4)')
         parser.add_argument('-i', '--input', type=str, default=None, help='Read from an input file.')
         parser.add_argument('-k', '--key', type=str, default='C', help='Set the key (default C)')
@@ -80,7 +80,9 @@ class Chords2Midi(object):
         offset = self.vargs['offset']
         key = self.vargs['key']
         octaves = self.vargs['octave'].split(',')
+        root_lowest = self.vargs.get('root_lowest', False)
 
+        # Could be interesting to do multiple parts at once.
         midi = MIDIFile(1)
         midi.addTempo(track, ttime, tempo)
 
@@ -103,29 +105,155 @@ class Chords2Midi(object):
                 try:
                     progression_chord = [pychord.Chord(chord).components()]
                 except Exception:
+                    # This is an 'X' input
                     progression_chord = [None]
 
             progression_chords.append(progression_chord[0])
 
-        for chord in progression_chords:
-            if chord is not None:
-                humanize_amount = humanize_interval
-                for octave in octaves:
-                    for i, note in enumerate(chord):
-                        pitch = pychord.utils.note_to_val(note) + (int(octave.strip()) * 12)
-                        midi.addNote(
-                            track=track,
-                            channel=channel,
-                            pitch=pitch,
-                            time=offset + bar + humanize_amount,
-                            duration=duration,
-                            volume=volume
-                        )
+        # For each input..
+        previous_pitches = []
+        for chord_index, chord in enumerate(progression_chords):
 
-                    humanize_amount = humanize_amount + humanize_interval
-                    if i + 1 >= num_notes:
-                        break
+            # NO_OP
+            if chord == None:
+                bar=bar+1
+                continue
+
+            # Reset internals
+            humanize_amount = humanize_interval
+            pitches = []
+            all_new_pitches = []
+
+            # Turns out this algorithm was already written in the 1800s!
+            # https://en.wikipedia.org/wiki/Voice_leading#Common-practice_conventions_and_pedagogy
+
+            # a) When a chord contains one or more notes that will be reused in the chords immediately following, then these notes should remain, that is retained in the respective parts.
+            # b) The parts which do not remain, follow the law of the shortest way (Gesetze des nachsten Weges), that is that each such part names the note of the following chord closest to itself if no forbidden succession XXX GOOD NAME FOR A BAND XXX arises from this.
+            # c) If no note at all is present in a chord which can be reused in the chord immediately following, one must apply contrary motion according to the law of the shortest way, that is, if the root progresses upwards, the accompanying parts must move downwards, or inversely, if the root progresses downwards, the other parts move upwards and, in both cases, to the note of the following chord closest to them.
+            root = None
+            for i, note in enumerate(chord):
+                pitch = pychord.utils.note_to_val(note)
+
+                if i == 0:
+                    root = pitch
+
+                if root:
+                    if root_lowest and pitch < root: # or chord_index is 0:
+                        pitch = pitch + 12 # Start with the root lowest
+
+                all_new_pitches.append(pitch)
+
+                # Reuse notes
+                if pitch in previous_pitches:
+                    pitches.append(pitch)
+
+            no_melodic_fluency = False # XXX: vargify
+            if previous_pitches == [] or all_new_pitches == [] or pitches == [] or no_melodic_fluency:
+                pitches = all_new_pitches
+            else:
+                # Detect the root direction
+                root_upwards = None
+                if pitches[0] >= all_new_pitches[0]:
+                    root_upwards = True
+                else:
+                    root_upwards = False
+
+                # Move the shortest distance
+                if pitches != []:
+                    new_remaining_pitches = all_new_pitches
+                    old_remaining_pitches = previous_pitches
+                    for i, new_pitch in enumerate(all_new_pitches):
+                        # We're already there
+                        if new_pitch in pitches:
+                            new_remaining_pitches.remove(new_pitch)
+                            old_remaining_pitches.remove(new_pitch)
+                            continue
+
+                    # Okay, so need to find the overall shortest distance from the remaining pitches - including their permutations!
+                    while len(new_remaining_pitches) > 0:
+                        nearest_distance = 9999
+                        previous_index = None
+                        new_index = None
+                        pitch_to_add = None
+                        for i, pitch in enumerate(new_remaining_pitches):
+
+                            # The Pitch
+                            pitch_to_test = pitch
+                            nearest = min(old_remaining_pitches, key=lambda x:abs(x-pitch_to_test))
+                            old_nearest_index = old_remaining_pitches.index(nearest)
+                            if nearest < nearest_distance:
+                                nearest_distance = nearest
+                                previous_index = old_nearest_index
+                                new_index = i
+                                pitch_to_add = pitch_to_test
+                                print('0')
+
+                            # +12
+                            pitch_to_test = pitch + 12
+                            nearest = min(old_remaining_pitches, key=lambda x:abs(x-pitch_to_test))
+                            old_nearest_index = old_remaining_pitches.index(nearest)
+                            if nearest < nearest_distance:
+                                nearest_distance = nearest
+                                previous_index = old_nearest_index
+                                new_index = i
+                                pitch_to_add = pitch_to_test
+                                print('+12')
+
+                            # -12
+                            pitch_to_test = pitch - 12
+                            nearest = min(old_remaining_pitches, key=lambda x:abs(x-pitch_to_test))
+                            old_nearest_index = old_remaining_pitches.index(nearest)
+                            if nearest < nearest_distance:
+                                nearest_distance = nearest
+                                previous_index = old_nearest_index
+                                new_index = i
+                                pitch_to_add = pitch_to_test
+                                print('-12')
+
+                        pitches.append(pitch_to_add)
+                        del old_remaining_pitches[previous_index]
+                        del new_remaining_pitches[new_index]
+
+                # Apply contrary motion
+                else:
+                    for i, new_pitch in enumerate(all_new_pitches):
+                        if i == 0:
+                            pitches.append(new_pitch)
+                            continue
+
+                        # Root upwards, the rest move down.
+                        if root_upwards:
+                            if new_pitch < previous_pitches[i]:
+                                pitches.append(new_pitch)
+                            else:
+                                pitches.append(new_pitch - 12)
+                        else:
+                            if new_pitch > previous_pitches[i]:
+                                pitches.append(new_pitch)
+                            else:
+                                pitches.append(new_pitch + 12)
+
+            # Octave is a simple MIDI offset counter
+            for octave in octaves:
+                for note in pitches:
+                    pitch = int(note) + (int(octave.strip()) * 12)
+
+                    # Write the note
+                    midi.addNote(
+                        track=track,
+                        channel=channel,
+                        pitch=pitch,
+                        time=offset + bar + humanize_amount,
+                        duration=duration,
+                        volume=volume
+                    )
+
+                humanize_amount = humanize_amount + humanize_interval
+                if i + 1 >= num_notes:
+                    break
             bar = bar + 1
+
+            previous_pitches = pitches
 
         ##
         # Output
