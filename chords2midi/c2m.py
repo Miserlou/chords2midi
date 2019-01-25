@@ -8,6 +8,7 @@ import traceback
 
 from midiutil import MIDIFile
 from mingus.core.progressions import to_chords
+import mingus.core.notes as notes
 
 ####################################################################
 # Data
@@ -132,7 +133,10 @@ class Chords2Midi(object):
             # c) If no note at all is present in a chord which can be reused in the chord immediately following, one must apply contrary motion according to the law of the shortest way, that is, if the root progresses upwards, the accompanying parts must move downwards, or inversely, if the root progresses downwards, the other parts move upwards and, in both cases, to the note of the following chord closest to them.
             root = None
             for i, note in enumerate(chord):
-                pitch = pychord.utils.note_to_val(note)
+
+                # Sanitize notes
+                sanitized_notes = notes.int_to_note(notes.note_to_int(note))
+                pitch = pychord.utils.note_to_val(sanitized_notes)
 
                 if i == 0:
                     root = pitch
@@ -212,7 +216,8 @@ class Chords2Midi(object):
                         pitches.append(pitch_to_add)
                         del old_remaining_pitches[previous_index]
                         del new_remaining_pitches[new_index]
-                                
+                        
+                        # This is for the C E7 type scenario 
                         if len(old_remaining_pitches) == 0:
                             for x, extra_pitch in enumerate(new_remaining_pitches):
                                 pitches.append(extra_pitch)
