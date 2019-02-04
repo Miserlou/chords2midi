@@ -14,6 +14,23 @@ import mingus.core.notes as notes
 # Data
 ####################################################################
 
+# N: Next
+# S: Same
+# X: Rest
+# +Z: Move Z Intervals Up
+# +Z: Move Z Intervals Down
+N = 'N'
+X = 'X'
+S = 'S'
+patterns = {
+    'basic': [N, X],
+    'basic2': [N, X, S, X,],
+    'basic4': [N, X, S, X, S, X, S, X],
+    'alt': [X, N],
+    'alt2': [X, N, X, S],
+    'alt4': [X, N, X, S, X, S, X, S]
+}
+
 ####################################################################
 # Main
 ####################################################################
@@ -44,6 +61,7 @@ class Chords2Midi(object):
         parser.add_argument('-H', '--humanize', type=float, default=0.0, help='Set the amount to "humanize" (strum) a chord, in ticks - try .11 (default 0.0)')
         parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
         parser.add_argument('-O', '--offset', type=float, default=0.0, help='Set the amount to offset each chord, in ticks. (default 0.0)')
+        parser.add_argument('-p', '--pattern', type=str, help='Set the pattern. Available patterns: ' + (', '.join(patterns.keys())))
         parser.add_argument('-v', '--version', action='store_true', default=False,
             help='Display the current version of chords2midi')
 
@@ -84,6 +102,10 @@ class Chords2Midi(object):
         octaves = self.vargs['octave'].split(',')
         root_lowest = self.vargs.get('root_lowest', False)
         bassline = self.vargs['bassline']
+        pattern = self.vargs['pattern']
+        if pattern not in patterns.keys():
+            print("Invalid pattern! Must be one of: " + (', '.join(patterns.keys())))
+            return
 
         # Could be interesting to do multiple parts at once.
         midi = MIDIFile(1)
@@ -93,9 +115,18 @@ class Chords2Midi(object):
         # Main generator
         ##
         has_number = False
+        progression_chords = []
+
+        # Apply patterns
+        if pattern:
+            new_progression = []
+            pattern_mask = patterns[pattern]
+            pattern_mask_index = 0
+            for i, item in enumerate(progression):
+                import pdb
+                pdb.set_trace()
 
         # We do this to allow blank spaces
-        progression_chords = []
         for chord in progression:
 
             # This is for # 'I', 'VI', etc
@@ -353,9 +384,12 @@ class Chords2Midi(object):
             else:
                 key_prefix = ''
 
-            filename = key_prefix + '-'.join(progression) + '-' + str(tempo) + '.mid'
+            filename = key_prefix + '-'.join(progression) + '-' + str(tempo)
+            if bassline:
+                filename = filename + "-bassline"
             if os.path.exists(filename):
-                filename = key_prefix + '-'.join(progression) + '-' + str(tempo) + '-' + str(int(time.time())) + '.mid'
+                filename = key_prefix + '-'.join(progression) + '-' + str(tempo) + '-' + str(int(time.time()))
+            filename = filename + '.mid'
 
         with open(filename, "wb") as output_file:
             midi.writeFile(output_file)
