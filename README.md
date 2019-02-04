@@ -46,9 +46,10 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -b BPM, --bpm BPM     Set the BPM (default 160)
+  -B, --bassline        Throw an extra bassline on the pattern
+  -b BPM, --bpm BPM     Set the BPM (default 80)
   -t OCTAVE, --octave OCTAVE
-                        Set the octave (default 4)
+                        Set the octave(s) (ex: 3,4) (default 4)
   -i INPUT, --input INPUT
                         Read from an input file.
   -k KEY, --key KEY     Set the key (default C)
@@ -62,6 +63,9 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         Set the output file path. Default is the current key
                         and progression in the current location.
+  -O OFFSET, --offset OFFSET
+                        Set the amount to offset each chord, in ticks.
+                        (default 0.0)
   -v, --version         Display the current version of chords2midi
 ```
 
