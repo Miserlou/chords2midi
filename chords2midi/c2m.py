@@ -34,6 +34,7 @@ class Chords2Midi(object):
         help_message = "Please supply chord progression!. See --help for more options."
         parser = argparse.ArgumentParser(description='chords2midi - Create MIDI files from written chord progressions.\n')
         parser.add_argument('progression', metavar='U', type=str, nargs='*', help=help_message)
+        parser.add_argument('-B', '--bassline', action='store_true', default=False, help='Throw an extra bassline on the pattern')
         parser.add_argument('-b', '--bpm', type=int, default=80, help='Set the BPM (default 80)')
         parser.add_argument('-t', '--octave', type=str, default='4', help='Set the octave(s) (ex: 3,4) (default 4)')
         parser.add_argument('-i', '--input', type=str, default=None, help='Read from an input file.')
@@ -82,6 +83,7 @@ class Chords2Midi(object):
         key = self.vargs['key']
         octaves = self.vargs['octave'].split(',')
         root_lowest = self.vargs.get('root_lowest', False)
+        bassline = self.vargs['bassline']
 
         # Could be interesting to do multiple parts at once.
         midi = MIDIFile(1)
@@ -109,11 +111,26 @@ class Chords2Midi(object):
                     # This is an 'X' input
                     progression_chord = [None]
 
-            progression_chords.append(progression_chord[0])
+            chord_info = {}
+            chord_info['notes'] = progression_chord[0]
+            if has_number:
+                chord_info['number'] = chord
+            else:
+                chord_info['name'] = chord
+
+
+            chord_info['root'] = progression_chord[0][0]
+
+            progression_chords.append(chord_info)
 
         # For each input..
         previous_pitches = []
-        for chord_index, chord in enumerate(progression_chords):
+        for chord_index, chord_info in enumerate(progression_chords):
+
+            # Unpack object
+            chord = chord_info['notes']
+            root = chord_info['root']
+            root_pitch = pychord.utils.note_to_val(notes.int_to_note(notes.note_to_int(root)))
 
             # NO_OP
             if chord == None:
@@ -289,17 +306,29 @@ class Chords2Midi(object):
                             else:
                                 pitches.append(new_pitch + 12)
 
+            # Bassline
+            if bassline:
+                pitches.append(root_pitch - 24)
+
+            # Melody
+
             # Octave is a simple MIDI offset counter
             for octave in octaves:
                 for note in pitches:
                     pitch = int(note) + (int(octave.strip()) * 12)
+
+                    # Don't humanize bassline note
+                    if bassline and (pitches.index(note) == len(pitches) -1):
+                        midi_time = offset + bar
+                    else:
+                        midi_time = offset + bar + humanize_amount
 
                     # Write the note
                     midi.addNote(
                         track=track,
                         channel=channel,
                         pitch=pitch,
-                        time=offset + bar + humanize_amount,
+                        time=midi_time,
                         duration=duration,
                         volume=volume
                     )
