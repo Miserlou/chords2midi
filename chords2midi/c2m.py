@@ -28,7 +28,8 @@ patterns = {
     'basic4': [N, X, S, X, S, X, S, X],
     'alt': [X, N],
     'alt2': [X, N, X, S],
-    'alt4': [X, N, X, S, X, S, X, S]
+    'alt4': [X, N, X, S, X, S, X, S],
+    'hiphop': [N, X, X, N, X, N, X, N]
 }
 
 ####################################################################
@@ -61,7 +62,7 @@ class Chords2Midi(object):
         parser.add_argument('-H', '--humanize', type=float, default=0.0, help='Set the amount to "humanize" (strum) a chord, in ticks - try .11 (default 0.0)')
         parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
         parser.add_argument('-O', '--offset', type=float, default=0.0, help='Set the amount to offset each chord, in ticks. (default 0.0)')
-        parser.add_argument('-p', '--pattern', type=str, help='Set the pattern. Available patterns: ' + (', '.join(patterns.keys())))
+        parser.add_argument('-p', '--pattern', type=str, default=None, help='Set the pattern. Available patterns: ' + (', '.join(patterns.keys())))
         parser.add_argument('-v', '--version', action='store_true', default=False,
             help='Display the current version of chords2midi')
 
@@ -87,6 +88,7 @@ class Chords2Midi(object):
                 content = ''.join(fn.readlines()).strip()
                 content = content.replace('\n', ' ').replace(',', '  ')
                 progression = content.split(' ')
+        og_progression = progression
 
         track    = 0
         channel  = 0
@@ -103,9 +105,6 @@ class Chords2Midi(object):
         root_lowest = self.vargs.get('root_lowest', False)
         bassline = self.vargs['bassline']
         pattern = self.vargs['pattern']
-        if pattern not in patterns.keys():
-            print("Invalid pattern! Must be one of: " + (', '.join(patterns.keys())))
-            return
 
         # Could be interesting to do multiple parts at once.
         midi = MIDIFile(1)
@@ -119,12 +118,34 @@ class Chords2Midi(object):
 
         # Apply patterns
         if pattern:
+            if pattern not in patterns.keys():
+                print("Invalid pattern! Must be one of: " + (', '.join(patterns.keys())))
+                return
+
             new_progression = []
+            input_progression = progression[:] # 2.7 copy
             pattern_mask = patterns[pattern]
             pattern_mask_index = 0
-            for i, item in enumerate(progression):
-                import pdb
-                pdb.set_trace()
+            current_chord = None
+
+            while True:
+                pattern_instruction = pattern_mask[pattern_mask_index]
+
+                if pattern_instruction == "N":
+                    if len(input_progression) == 0:
+                        break
+                    current_chord = input_progression.pop(0)
+                    new_progression.append(current_chord)
+                elif pattern_instruction == "S":
+                    new_progression.append(current_chord)
+                elif pattern_instruction == "X":
+                    new_progression.append("X")
+
+                if pattern_mask_index == len(pattern_mask) - 1:
+                    pattern_mask_index = 0
+                else:
+                    pattern_mask_index = pattern_mask_index + 1
+            progression = new_progression
 
         # We do this to allow blank spaces
         for chord in progression:
@@ -149,9 +170,10 @@ class Chords2Midi(object):
             else:
                 chord_info['name'] = chord
 
-
-            chord_info['root'] = progression_chord[0][0]
-
+            if progression_chord[0]:
+                chord_info['root'] = progression_chord[0][0]
+            else:
+                chord_info['root'] = None
             progression_chords.append(chord_info)
 
         # For each input..
@@ -160,13 +182,12 @@ class Chords2Midi(object):
 
             # Unpack object
             chord = chord_info['notes']
-            root = chord_info['root']
-            root_pitch = pychord.utils.note_to_val(notes.int_to_note(notes.note_to_int(root)))
-
             # NO_OP
             if chord == None:
                 bar=bar+1
                 continue
+            root = chord_info['root']
+            root_pitch = pychord.utils.note_to_val(notes.int_to_note(notes.note_to_int(root)))
 
             # Reset internals
             humanize_amount = humanize_interval
@@ -384,11 +405,13 @@ class Chords2Midi(object):
             else:
                 key_prefix = ''
 
-            filename = key_prefix + '-'.join(progression) + '-' + str(tempo)
+            filename = key_prefix + '-'.join(og_progression) + '-' + str(tempo)
             if bassline:
                 filename = filename + "-bassline"
+            if pattern:
+                filename = filename + "-" + pattern
             if os.path.exists(filename):
-                filename = key_prefix + '-'.join(progression) + '-' + str(tempo) + '-' + str(int(time.time()))
+                filename = key_prefix + '-'.join(og_progression) + '-' + str(tempo) + '-' + str(int(time.time()))
             filename = filename + '.mid'
 
         with open(filename, "wb") as output_file:
