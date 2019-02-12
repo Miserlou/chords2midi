@@ -1,6 +1,7 @@
 # c2m.py - chords2midi
 
 import argparse
+import errno
 import os
 import pychord
 import time
@@ -59,6 +60,7 @@ class Chords2Midi(object):
         parser.add_argument('-k', '--key', type=str, default='C', help='Set the key (default C)')
         parser.add_argument('-n', '--notes', type=int, default=99, help='Notes in each chord (default all)')
         parser.add_argument('-d', '--duration', type=float, default=1.0, help='Set the chord duraction (default 1)')
+        parser.add_argument('-D', '--directory', action='store_true', default=False, help='Output the contents to the directory of the input progression.')
         parser.add_argument('-H', '--humanize', type=float, default=0.0, help='Set the amount to "humanize" (strum) a chord, in ticks - try .11 (default 0.0)')
         parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
         parser.add_argument('-O', '--offset', type=float, default=0.0, help='Set the amount to offset each chord, in ticks. (default 0.0)')
@@ -98,6 +100,7 @@ class Chords2Midi(object):
         volume   = 100  # 0-127, as per the MIDI standard
         bar = 0
         humanize_interval = self.vargs['humanize']
+        directory = self.vargs['directory']
         num_notes = self.vargs['notes']
         offset = self.vargs['offset']
         key = self.vargs['key']
@@ -249,7 +252,7 @@ class Chords2Midi(object):
                         new_index = None
                         pitch_to_add = None
                         for i, pitch in enumerate(new_remaining_pitches):
-                            # XXX: DRY 
+                            # XXX: DRY
 
                             # The Pitch
                             pitch_to_test = pitch
@@ -285,8 +288,8 @@ class Chords2Midi(object):
                         pitches.append(pitch_to_add)
                         del old_remaining_pitches[previous_index]
                         del new_remaining_pitches[new_index]
-                        
-                        # This is for the C E7 type scenario 
+
+                        # This is for the C E7 type scenario
                         if len(old_remaining_pitches) == 0:
                             for x, extra_pitch in enumerate(new_remaining_pitches):
                                 pitches.append(extra_pitch)
@@ -303,13 +306,13 @@ class Chords2Midi(object):
                     max_pitch = max(pitches)
                     min_pitch = min(pitches)
                     index_min = pitches.index(min_pitch)
-                    
+
                     folded_min = min_pitch + 12
                     if (folded_min < max_pitch) and (folded_min not in pitches):
                         pitches[index_min] = folded_min
 
                     # Make sure the average can't be improved
-                    # XXX: DRY 
+                    # XXX: DRY
                     if len(previous_pitches) != 0:
                         previous_average = sum(previous_pitches) / len(previous_pitches)
 
@@ -413,6 +416,17 @@ class Chords2Midi(object):
             if os.path.exists(filename):
                 filename = key_prefix + '-'.join(og_progression) + '-' + str(tempo) + '-' + str(int(time.time()))
             filename = filename + '.mid'
+
+            if directory:
+                directory_to_create = '-'.join(og_progression)
+                try:
+                    os.makedirs(directory_to_create)
+                except OSError as exc:  # Python >2.5
+                    if exc.errno == errno.EEXIST and os.path.isdir(directory_to_create):
+                        pass
+                    else:
+                        raise
+                filename = directory_to_create + '/' + filename
 
         with open(filename, "wb") as output_file:
             midi.writeFile(output_file)
