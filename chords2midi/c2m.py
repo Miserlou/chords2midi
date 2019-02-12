@@ -17,8 +17,15 @@ import mingus.core.notes as notes
 # N: Next
 # S: Same
 # X: Rest
+
+# TODO:
 # +Z: Move Z Intervals Up
 # +Z: Move Z Intervals Down
+
+# TODO:
+# Include duration in inputs
+# ex: 2N X N .5S .5S
+
 N = 'N'
 X = 'X'
 S = 'S'
