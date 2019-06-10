@@ -107,6 +107,14 @@ Sad:
 
     $ c2m vi IV I V
 
+Neo-soul:
+
+    $ c2m ii7 V9 I7
+
+Hot Chip:
+
+    $ c2m Cm Bb Fm Cm Eb Bb G Cm --bpm 125 --pattern alt2
+
 And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
 ## Playback
