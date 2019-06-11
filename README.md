@@ -93,7 +93,7 @@ Smoke on the water:
 
 Wild thing:
 
-    $ c2m I IV  V IV
+    $ c2m I IV V IV
 
 Flamenco:
 
@@ -114,6 +114,12 @@ Neo-soul:
 Hot Chip:
 
     $ c2m Cm Bb Fm Cm Eb Bb G Cm --bpm 125 --pattern alt2
+
+Country:
+
+    $ c2m I vi IV V
+    $ c2m I ii V I 
+    $ c2m I IV I vi V IV I 
 
 And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
