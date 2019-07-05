@@ -115,11 +115,36 @@ Hot Chip:
 
     $ c2m Cm Bb Fm Cm Eb Bb G Cm --bpm 125 --pattern alt2
 
+House:
+
+    $ c2m I VII V VI
+
+EDM:
+
+   $ c2m VI IV I V
+   
+   or
+   
+   $ c2m VI IV V I // or basically any order of these chords
+
 Country:
 
     $ c2m I vi IV V
     $ c2m I ii V I 
     $ c2m I IV I vi V IV I 
+
+Frank Ocean:
+
+    $ c2m IV7 ii7 iii7 vi IV7 iii7 III7 ii
+    $ c2m iv III VIII i 
+
+Alice Deejay:
+
+   $ c2m E D#m G#m F# --bpm 137
+
+The Chad Basic Music Theory Producer:
+
+   $ c2m vi IV III V
 
 And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
