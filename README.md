@@ -134,11 +134,11 @@ House:
 
 EDM:
 
-   $ c2m VI IV I V
+    $ c2m VI IV I V
 
-   or
+or
 
-   $ c2m VI IV V I // or basically any order of these chords
+    $ c2m VI IV V I // or basically any order of these chords
 
 Country:
 
@@ -153,11 +153,11 @@ Frank Ocean:
 
 Alice Deejay:
 
-   $ c2m E D#m G#m F# --bpm 137
+    $ c2m E D#m G#m F# --bpm 137
 
 The Chad Basic Music Theory Producer:
 
-   $ c2m vi IV III V
+    $ c2m vi IV III V
 
 And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
