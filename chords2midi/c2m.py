@@ -109,8 +109,14 @@ class Chords2Midi(object):
                 position = determine(comps, key, True)[0]
                 if 'M' in position:
                     position = position.upper()
-                position = position.replace('M', '')
-                position = position.replace('m', '')
+                    position = position.replace('M', '')
+                if 'm' in position:
+                    position = position.lower()
+                    position = position.replace('m', '')
+                if 'B' in position:
+                    position = position + "b"
+                    position = position.replace('B', '')
+
                 result = result + position + " "
             print result
             return
