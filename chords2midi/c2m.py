@@ -8,7 +8,7 @@ import time
 import traceback
 
 from midiutil import MIDIFile
-from mingus.core.progressions import to_chords
+from mingus.core.progressions import to_chords, determine
 import mingus.core.notes as notes
 
 ####################################################################
@@ -72,6 +72,7 @@ class Chords2Midi(object):
         parser.add_argument('-o', '--output', type=str, help='Set the output file path. Default is the current key and progression in the current location.')
         parser.add_argument('-O', '--offset', type=float, default=0.0, help='Set the amount to offset each chord, in ticks. (default 0.0)')
         parser.add_argument('-p', '--pattern', type=str, default=None, help='Set the pattern. Available patterns: ' + (', '.join(patterns.keys())))
+        parser.add_argument('-r', '--reverse', action='store_true', default=False, help='Reverse a progression from C-D-E format into I-II-III format')
         parser.add_argument('-v', '--version', action='store_true', default=False,
             help='Display the current version of chords2midi')
 
@@ -98,6 +99,21 @@ class Chords2Midi(object):
                 content = content.replace('\n', ' ').replace(',', '  ')
                 progression = content.split(' ')
         og_progression = progression
+
+        # If we're reversing, we don't need any of the MIDI stuff.
+        if self.vargs['reverse']:
+            result = ""
+            key = self.vargs['key']
+            for item in progression:
+                comps = pychord.Chord(item).components()
+                position = determine(comps, key, True)[0]
+                if 'M' in position:
+                    position = position.upper()
+                position = position.replace('M', '')
+                position = position.replace('m', '')
+                result = result + position + " "
+            print result
+            return
 
         track    = 0
         channel  = 0

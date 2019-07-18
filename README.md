@@ -31,11 +31,17 @@ You can place rests with `X`:
 
     $ c2m I X V X vi X IV
 
+You can also reverse formats, so you can easily transpose into a different key:
+
+    $ c2m C D E --key C --reverse
+    I II III
+
 Further options:
 
 ```
-usage: c2m.py [-h] [-b BPM] [-t OCTAVE] [-i INPUT] [-k KEY] [-n NOTES]
-              [-d DURATION] [-H HUMANIZE] [-o OUTPUT] [-v]
+usage: c2m.py [-h] [-B] [-b BPM] [-t OCTAVE] [-i INPUT] [-k KEY] [-n NOTES]
+              [-d DURATION] [-D] [-H HUMANIZE] [-o OUTPUT] [-O OFFSET]
+              [-p PATTERN] [-r] [-v]
               [U [U ...]]
 
 chords2midi - Create MIDI files from written chord progressions.
@@ -57,6 +63,8 @@ optional arguments:
                         Notes in each chord (default all)
   -d DURATION, --duration DURATION
                         Set the chord duraction (default 1)
+  -D, --directory       Output the contents to the directory of the input
+                        progression.
   -H HUMANIZE, --humanize HUMANIZE
                         Set the amount to "humanize" (strum) a chord, in ticks
                         - try .11 (default 0.0)
@@ -66,6 +74,11 @@ optional arguments:
   -O OFFSET, --offset OFFSET
                         Set the amount to offset each chord, in ticks.
                         (default 0.0)
+  -p PATTERN, --pattern PATTERN
+                        Set the pattern. Available patterns: basic2, basic4,
+                        hiphop, basic, alt, alt4, alt2
+  -r, --reverse         Reverse a progression from C-D-E format into I-II-III
+                        format
   -v, --version         Display the current version of chords2midi
 ```
 
@@ -122,21 +135,21 @@ House:
 EDM:
 
    $ c2m VI IV I V
-   
+
    or
-   
+
    $ c2m VI IV V I // or basically any order of these chords
 
 Country:
 
     $ c2m I vi IV V
-    $ c2m I ii V I 
-    $ c2m I IV I vi V IV I 
+    $ c2m I ii V I
+    $ c2m I IV I vi V IV I
 
 Frank Ocean:
 
     $ c2m IV7 ii7 iii7 vi IV7 iii7 III7 ii
-    $ c2m iv III VIII i 
+    $ c2m iv III VIII i
 
 Alice Deejay:
 
