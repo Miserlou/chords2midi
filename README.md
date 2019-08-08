@@ -162,6 +162,7 @@ The Chad Basic Music Theory Producer:
 Doo-Wop:
 
    $ c2m I vi IV V
+   $ c2m I vi bVI V; # Bridge!
 
 And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
