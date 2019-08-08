@@ -159,6 +159,10 @@ The Chad Basic Music Theory Producer:
 
     $ c2m vi IV III V
 
+Doo-Wop:
+
+   $ c2m I vi IV V
+
 And [lots more](https://www.hooktheory.com/theorytab/common-chord-progressions)!
 
 ## Playback
