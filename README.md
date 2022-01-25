@@ -3,6 +3,8 @@
 
 Given it a chord progression, get a MIDI file!
 
+It even has voice leading!
+
 Take your MIDI file, drop it into your favorite DAW and [make a beat!](https://clyp.it/drltahki) Or [two](https://clyp.it/f0g1ko5b).
 
 ## Installation

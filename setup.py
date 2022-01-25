@@ -14,7 +14,7 @@ with open(os.path.join(os.path.dirname(__file__), 'requirements.txt')) as f:
 
 setup(
     name='chords2midi',
-    version='0.8.0',
+    version='0.9.0',
     packages=['chords2midi'],
     install_requires=required,
     include_package_data=True,
@@ -23,7 +23,7 @@ setup(
     long_description=README,
     url='https://github.com/Miserlou/chords2midi',
     author='Rich Jones',
-    author_email='rich@openwatch.net',
+    author_email='miserlou@gmail.com',
     entry_points={
         'console_scripts': [
             'c2m=chords2midi.c2m:handle',
@@ -35,6 +35,8 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
