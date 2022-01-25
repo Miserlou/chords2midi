@@ -118,7 +118,7 @@ class Chords2Midi(object):
                     position = position.replace('B', '')
 
                 result = result + position + " "
-            print result
+            print(result)
             return
 
         track    = 0
